@@ -9,12 +9,13 @@ import (
 	"os/signal"
 	"time"
 	"context"
-	"14joined.me/cs/handlers"
+
+	handlers "14joined.me/cs/handlers"
 	"14joined.me/cs/middleware"
 )
 
 var (
-	addr = flag.String("address", "127.0.0.1:9000", "listen address")
+	addr = flag.String("address", "127.0.0.1:9001", "listen address")
 	files = flag.String("public", "./public", "client files")
 )
 
@@ -44,9 +45,7 @@ func run(addr, files string) error {
 		"/",
 		handlers.Methods{
 			http.MethodGet: http.HandlerFunc(
-				func(w http.ResponseWriter, r *http.Request) {
-					w.Write([]byte("hello, world!"))
-				},
+				handlers.MainRoute(files),
 			),
 		},
 	)

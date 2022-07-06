@@ -9,17 +9,30 @@ form.addEventListener('submit', (event) => {
     const paramHeaders = new Headers({'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'});
 
     var token = ""
+
     fetch("/request-access", {
         method: 'POST',
         body: payload,
         headers: paramHeaders}
          ).then(res => res.json())
         .then(res => {
+            console.log(res)
             if(typeof res.token == 'undefined') {
                 window.location.reload()
             } else {
                 token = res.token
-                console.log(res.token)
+                fetch("/".concat(usrname), {
+                    method: 'GET',
+                    headers: {"Authorization": "Bearer ".concat(token)},
+                }).then(resp => 
+                    resp.text()
+                ).then(resp => {
+                    const state = { 'username': usrname }
+                    window.history.pushState(state, "", "/".concat(usrname))
+                    document.body.innerHTML = resp
+                    document.title = "Authenticated"
+                })
             }
         })
+
 })
